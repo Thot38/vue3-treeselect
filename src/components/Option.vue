@@ -1,4 +1,5 @@
 <script>
+  import { Transition, h } from 'vue'
   import { UNCHECKED, INDETERMINATE, CHECKED } from '../constants'
   import { onLeftClick } from '../utils'
   import Tip from './Tip'
@@ -42,16 +43,29 @@
           'vue-treeselect__option--hide': !this.shouldShow,
         }
 
-        return (
-          <div class={optionClass} onMouseenter={this.handleMouseEnterOption} data-id={node.id}>
-            {this.renderArrow()}
-            {this.renderLabelContainer([
+        // return (
+        //   <div class={optionClass} onMouseenter={this.handleMouseEnterOption} data-id={node.id}>
+        //     {this.renderArrow()}
+        //     {this.renderLabelContainer([
+        //       this.renderCheckboxContainer([
+        //         this.renderCheckbox(),
+        //       ]),
+        //       this.renderLabel(),
+        //     ])}
+        //   </div>
+        // )
+
+        return h('div',
+         {class: optionClass, onMouseEnter: (evt) => this.handleMouseEnterOption(evt), 'data-id': node.id },
+         [
+            this.renderArrow(), 
+            this.renderLabelContainer([
               this.renderCheckboxContainer([
                 this.renderCheckbox(),
               ]),
               this.renderLabel(),
-            ])}
-          </div>
+            ])
+          ]
         )
       },
 
@@ -79,12 +93,21 @@
             'vue-treeselect__option-arrow--rotated': this.shouldExpand,
           }
 
-          return (
-            <div class="vue-treeselect__option-arrow-container" onMousedown={this.handleMouseDownOnArrow}>
-              <transition name="vue-treeselect__option-arrow--prepare" appear={true}>
-                <ArrowIcon class={arrowClass} />
-              </transition>
-            </div>
+          // return (
+          //   <div class="vue-treeselect__option-arrow-container" onMousedown={this.handleMouseDownOnArrow}>
+          //     <Transition name="vue-treeselect__option-arrow--prepare" appear={true}>
+          //       <ArrowIcon class={arrowClass} />
+          //     </Transition>
+          //   </div>
+          // )
+          return h('div',
+            {class: 'vue-treeselect__option-arrow-container', onMousedown: (evt) => this.handleMouseDownOnArrow(evt)},
+            [
+              h(Transition, 
+                {name: 'vue-treeselect__option-arrow--prepare', appear: true },
+                [h(ArrowIcon, {class: arrowClass})] 
+              )
+            ]
           )
         }
 
@@ -92,8 +115,8 @@
         // branch nodes. Unless there is no branch nodes at all (a normal
         // non-tree select).
         if (/*node.isLeaf && */instance.hasBranchNodes) {
-          if (!arrowPlaceholder) arrowPlaceholder = (
-            <div class="vue-treeselect__option-arrow-placeholder">&nbsp;</div>
+          if (!arrowPlaceholder) arrowPlaceholder = h('div',
+            { class:'vue-treeselect__option-arrow-placeholder'}, ['&nbsp;']
           )
 
           return arrowPlaceholder
@@ -103,11 +126,7 @@
       },
 
       renderLabelContainer(children) {
-        return (
-          <div class="vue-treeselect__label-container" onMousedown={this.handleMouseDownOnLabelContainer}>
-            {children}
-          </div>
-        )
+        return h('div', {class: 'vue-treeselect__label-container', onMousedown: (evt) => this.handleMouseDownOnLabelContainer(evt) }, [...children])
       },
 
       renderCheckboxContainer(children) {
@@ -116,11 +135,7 @@
         if (instance.single) return null
         if (instance.disableBranchNodes && node.isBranch) return null
 
-        return (
-          <div class="vue-treeselect__checkbox-container">
-            {children}
-          </div>
-        )
+        return h('div', {class: 'vue-treeselect__checkbox-container'}, [...children])
       },
 
       renderCheckbox() {
@@ -134,19 +149,10 @@
           'vue-treeselect__checkbox--disabled': node.isDisabled,
         }
 
-        if (!checkMark) checkMark = (
-          <span class="vue-treeselect__check-mark" />
-        )
-        if (!minusMark) minusMark = (
-          <span class="vue-treeselect__minus-mark" />
-        )
+        if (!checkMark) checkMark = h('span', {class: 'vue-treeselect__check-mark'})
+        if (!minusMark) minusMark = h('span', {class: 'vue-treeselect__minus-mark'})
 
-        return (
-          <span class={checkboxClass}>
-            {checkMark}
-            {minusMark}
-          </span>
-        )
+        return h('span', {class: checkboxClass}, [checkMark, minusMark])
       },
 
       renderLabel() {
@@ -173,14 +179,7 @@
           labelClassName,
           countClassName,
         })
-        return (
-          <label class={labelClassName}>
-            {node.label}
-            {shouldShowCount && (
-              <span class={countClassName}>({count})</span>
-            )}
-          </label>
-        )
+        return h('label', {class: labelClassName}, [node.label, shouldShowCount && h('span', {class: countClassName}, [count])])
       },
 
       renderSubOptions() {
@@ -188,10 +187,7 @@
         
         if (!node.childrenStates.isLoaded) return null
 
-        return node.children.map(childNode => (
-          <vue-treeselect--option node={childNode} key={childNode.id} />
-        ))
-
+        return node.children.map(childNode => h('vue-treeselect--option', {node: childNode, key: childNode.id}))
       },
 
       renderNoChildrenTip() {
@@ -199,9 +195,7 @@
 
         if (!node.childrenStates.isLoaded || node.children.length) return null
 
-        return (
-          <Tip type="no-children" icon="warning">{ instance.noChildrenText }</Tip>
-        )
+        return h(Tip, {type: 'no-children', icon: 'warning'}, [instance.noChildrenText])
       },
 
       renderLoadingChildrenTip() {
@@ -209,9 +203,7 @@
 
         if (!node.childrenStates.isLoading) return null
 
-        return (
-          <Tip type="loading" icon="loader">{ instance.loadingText }</Tip>
-        )
+        return h(Tip, {type: 'loading', icon: 'loader'}, [instance.loadingText])
       },
 
       renderLoadingChildrenErrorTip() {
@@ -219,14 +211,15 @@
 
         if (!node.childrenStates.loadingError) return null
 
-        return (
-          <Tip type="error" icon="error">
-            { node.childrenStates.loadingError }
-            <a class="vue-treeselect__retry" title={instance.retryTitle} onMousedown={this.handleMouseDownOnRetry}>
-              { instance.retryText }
-            </a>
-          </Tip>
-        )
+        // return (
+        //   <Tip type="error" icon="error">
+        //     { node.childrenStates.loadingError }
+        //     <a class="vue-treeselect__retry" title={instance.retryTitle} onMousedown={this.handleMouseDownOnRetry}>
+        //       { instance.retryText }
+        //     </a>
+        //   </Tip>
+        // )
+        return h(Tip, {type: 'error', icon: 'error'}, [node.childrenStates.loadingError, h('a', {class:'vue-treeselect__retry', title:instance.retryTitle, onMousedown: () => this.handleMouseDownOnRetry()  }, [instance.retryText])])
       },
 
       handleMouseEnterOption(evt) {
@@ -267,17 +260,27 @@
         'vue-treeselect__list-item': true,
         [`vue-treeselect__indent-level-${indentLevel}`]: true,
       }
-
-      return (
-        <div class={listItemClass}>
-          {this.renderOption()}
-          {node.isBranch ? (
-            <transition name="vue-treeselect__list--transition">
-              {this.renderSubOptionsList()}
-            </transition>
-          ) : ''}
-        </div>
-      )
+      // const children = node.isBranch ? (
+      //       <Transition name="vue-treeselect__list--transition">
+      //         {this.renderSubOptionsList()}
+      //       </Transition>
+      //     ) : '';
+      // return (
+      //   <div class={listItemClass}>
+      //     {this.renderOption()}
+      //     {node.isBranch ? (
+      //       <Transition name="vue-treeselect__list--transition">
+      //         {this.renderSubOptionsList()}
+      //       </Transition>
+      //     ) : ''}
+      //   </div>
+      // )
+      return h('div', 
+        	{class: listItemClass},
+          [
+            this.renderOption(),
+            node.isBranch ? h(Transition, {name: 'vue-treeselect__list--transition'}, [this.renderSubOptionsList()]) : h('')
+          ])
     },
   }
 

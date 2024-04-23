@@ -1,4 +1,5 @@
 <script>
+import {h} from 'vue'
   import { isNaN } from '../utils'
   import {defineComponent} from 'vue';
 

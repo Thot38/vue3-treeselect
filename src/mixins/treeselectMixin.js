@@ -1154,6 +1154,8 @@ export default {
     },
 
     getInput() {
+      console.log('getInput')
+      console.log(this.getValueContainer().$refs)
       return this.getValueContainer().$refs.input
     },
 
@@ -1162,13 +1164,14 @@ export default {
     },
 
     blurInput() {
+      console.log('blurInput')
       this.getInput().blur()
     },
 
     handleMouseDown: onLeftClick(function handleMouseDown(evt) {
       evt.preventDefault()
       evt.stopPropagation()
-
+      console.log('i')
       if (this.disabled) return
 
       const isClickedOnValueContainer = this.getValueContainer().$el.contains(evt.target)
@@ -1477,7 +1480,6 @@ export default {
 
     toggleExpanded(node) {
       let nextState
-
       if (this.localSearch.active) {
         nextState = node.isExpandedOnSearch = !node.isExpandedOnSearch
         if (nextState) node.showAllChildrenOnSearch = true

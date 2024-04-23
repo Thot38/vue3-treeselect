@@ -1,4 +1,5 @@
 <script>
+import {h} from 'vue'
   export default {
     name: 'vue-treeselect--placeholder',
     inject: [ 'instance' ],

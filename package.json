@@ -7,14 +7,19 @@
   "author": "megafetis",
   "scripts": {
     "build": "vue-cli-service build --target lib --name vue3-treeselect ./src/index.js && webpack --env.production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve-lib": "vue-cli-service serve --target lib --name vue3-treeselect ./src/index.js && webpack --env.production",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "vue-cli-service serve --port 8082 ./demo/index.js",
+    "demo": "vue-cli-service --port 8082 ./demo/index.js",
+    "watch": "nodemon --watch src --exec \"npm run build\"",
+    "dev": "npm run build && npm run serve"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-typescript": "^7.12.7",
     "@types/ts-nameof": "4.2.1",
-    "@vue/babel-plugin-jsx": "1.0.1",
+    "@vue/babel-plugin-jsx": "1.2.1",
     "@vue/babel-preset-jsx": "1.2.4",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
@@ -22,6 +27,7 @@
     "@vue/compiler-sfc": "3.0.5",
     "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^3.0.0",
+    "concurrently": "^8.2.2",
     "copy-webpack-plugin": "^6.0.3",
     "css-loader": "^4.2.0",
     "dotenv": "^8.2.0",
@@ -34,6 +40,7 @@
     "less-loader": "^7.1.0",
     "material-colors": "1.2.6",
     "mini-css-extract-plugin": "^0.9.0",
+    "nodemon": "^3.1.0",
     "resolve-url-loader": "^3.1.2",
     "sass": "^1.26.10",
     "sass-loader": "^9.0.3",

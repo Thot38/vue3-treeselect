@@ -1,4 +1,5 @@
 <script>
+import {h} from 'vue'
   import Input from './Input'
   import Placeholder from './Placeholder'
 

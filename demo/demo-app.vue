@@ -1,6 +1,4 @@
 <template>
-    
-
     <div>
         <vue-treeselect
             :multiple="true"
